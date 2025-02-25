@@ -1,4 +1,4 @@
-import { Container, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 const Home = () => {
