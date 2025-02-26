@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Table, TableBody, TableCell, TableHead, TableRow, 
-  Typography, Paper, TableContainer, IconButton, Button, TablePagination, Box 
+  Typography, Paper, TableContainer, IconButton, Button, TablePagination, Box,
+  TextField, InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SearchIcon from '@mui/icons-material/Search';
 import { customerApi } from '../../services/api';
 import { Customer } from '../../types';
 import CreateCustomer from './CreateCustomer';
@@ -17,15 +19,16 @@ const CustomerList = () => {
   const [page, setPage] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     loadCustomers();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, searchQuery]);
 
   const loadCustomers = async () => {
     try {
-      const response = await customerApi.getAll(page, rowsPerPage);
+      const response = await customerApi.getAll(page, rowsPerPage, searchQuery);
       setCustomers(response.data.content);
       setTotalElements(response.data.totalElements);
     } catch (error) {
@@ -51,6 +54,11 @@ const CustomerList = () => {
     setPage(0);
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setPage(0);
+  };
+
   return (
     <Box>
       <Typography variant="h4" sx={{ textAlign: 'center' }} gutterBottom>
@@ -64,6 +72,23 @@ const CustomerList = () => {
       >
         Nouveau Client
       </Button>
+
+      <Box sx={{ marginLeft: 'auto', marginRight: 'auto', width: '300px',marginTop: '10px' }}>
+        <TextField
+          placeholder="Rechercher par nom"
+          variant="outlined"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          sx={{ width: '300px' }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />      
+      </Box>
       <TableContainer component={Paper} sx={tableStyles.container}>
         <Table>
           <TableHead>

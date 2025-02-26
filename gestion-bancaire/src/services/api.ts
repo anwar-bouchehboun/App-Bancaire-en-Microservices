@@ -11,9 +11,11 @@ const api = axios.create({
 });
 
 export const customerApi = {
-  getAll: (page = 0, size = 10) =>
+  getAll: (page = 0, size = 10, name?: string) =>
     api.get<CustomerResponse>(
-      `/customer-service/api/customers?page=${page}&size=${size}`
+      `/customer-service/api/customers?page=${page}&size=${size}${
+        name ? `&name=${name}` : ""
+      }`
     ),
 
   getById: (id: number) =>

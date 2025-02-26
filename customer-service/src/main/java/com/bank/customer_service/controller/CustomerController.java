@@ -5,13 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.bank.customer_service.dto.request.CustomerRequest;
 import com.bank.customer_service.dto.response.CustomerResponse;
@@ -24,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("api/customers")
 @OpenAPIDefinition(info = @Info(title = "Customer Service API", version = "1.0", description = "API pour la gestion des clients"))
@@ -33,7 +26,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @Operation(summary = "Créer un nouveau client", description = "Crée un nouveau client avec les informations fournies")
-     @Schema(implementation = CustomerRequest.class)
+    @Schema(implementation = CustomerRequest.class)
     @ApiResponse(responseCode = "201", description = "Client créé avec succès")
     @ApiResponse(responseCode = "409", description = "Customer already exists with email: xxxxx@example.com")
     @ApiResponse(responseCode = "400", description = "Validation failed: Invalid email format")
@@ -43,12 +36,14 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(customerResponse);
     }
 
-
     @Operation(summary = "Récupérer tous les clients", description = "Récupère tous les clients avec pagination")
     @ApiResponse(responseCode = "200", description = "Clients récupérés avec succès")
     @ApiResponse(responseCode = "404", description = "Aucun client trouvé")
     @GetMapping
-    public Page<CustomerResponse> getAllCustomers(Pageable pageable) {
+    public Page<CustomerResponse> getAllCustomers(Pageable pageable, @RequestParam(required = false) String name) {
+        if (name != null && !name.isEmpty()) {
+            return customerService.searchCustomersByName(name, pageable);
+        }
         return customerService.getAllCustomers(pageable);
     }
 
@@ -61,12 +56,11 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Supprimer un client par son ID", description = "Supprime un client par son ID")
-    @ApiResponse(responseCode = "200", description = "Client supprimé avec succès")
+    @Operation(summary = "Supprimer un client", description = "Supprime un client par son ID")
+    @ApiResponse(responseCode = "204", description = "Client supprimé avec succès")
     @ApiResponse(responseCode = "404", description = "Client non trouvé")
-    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Customer deleted successfully");
+        return ResponseEntity.noContent().build();
     }
-
 }
