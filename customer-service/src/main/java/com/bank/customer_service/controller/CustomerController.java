@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.DefaultValue;
 
 @RestController
 @RequestMapping("api/customers")
@@ -42,8 +43,10 @@ public class CustomerController {
     @GetMapping
     public Page<CustomerResponse> getAllCustomers(Pageable pageable, @RequestParam(required = false) String name) {
         if (name != null && !name.isEmpty()) {
+
             return customerService.searchCustomersByName(name, pageable);
         }
+
         return customerService.getAllCustomers(pageable);
     }
 
@@ -53,6 +56,18 @@ public class CustomerController {
     @ApiResponse(responseCode = "404", description = "Client non trouvé")
     public CustomerResponse getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Mettre à jour un client", description = "Met à jour les informations d'un client existant")
+    @ApiResponse(responseCode = "200", description = "Client mis à jour avec succès")
+    @ApiResponse(responseCode = "404", description = "Client non trouvé")
+    @ApiResponse(responseCode = "409", description = "L'email est déjà utilisé par un autre client")
+    public ResponseEntity<CustomerResponse> updateCustomer(
+            @PathVariable Long id,
+            @Valid @RequestBody CustomerRequest request) {
+        CustomerResponse updatedCustomer = customerService.updateCustomer(id, request);
+        return ResponseEntity.ok(updatedCustomer);
     }
 
     @DeleteMapping("/{id}")

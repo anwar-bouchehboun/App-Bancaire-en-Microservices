@@ -6,29 +6,35 @@ import {
   TextField, InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SearchIcon from '@mui/icons-material/Search';
 import { customerApi } from '../../services/api';
 import { Customer } from '../../types';
 import CreateCustomer from './CreateCustomer';
+import EditCustomer from './EditCustomer';
 import { tableStyles } from '../../styles/tableStyles';
 
 const CustomerList = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [page, setPage] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const navigate = useNavigate();
 
   useEffect(() => {
     loadCustomers();
-  }, [page, rowsPerPage, searchQuery]);
+  }, [page, rowsPerPage, searchQuery, sortOrder]);
 
   const loadCustomers = async () => {
     try {
-      const response = await customerApi.getAll(page, rowsPerPage, searchQuery);
+      const sort = `id,${sortOrder}`;
+      const response = await customerApi.getAll(page, rowsPerPage, searchQuery, sort);
       setCustomers(response.data.content);
       setTotalElements(response.data.totalElements);
     } catch (error) {
@@ -45,6 +51,11 @@ const CustomerList = () => {
     }
   };
 
+  const handleEdit = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setOpenEditDialog(true);
+  };
+
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -57,6 +68,10 @@ const CustomerList = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     setPage(0);
+  };
+
+  const handleSortChange = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   return (
@@ -93,6 +108,12 @@ const CustomerList = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell 
+                sx={{...tableStyles.headerCell, cursor: 'pointer'}}
+                onClick={handleSortChange}
+              >
+                ID {sortOrder === 'asc' ? '↑' : '↓'}
+              </TableCell>
               <TableCell sx={tableStyles.headerCell}>Nom</TableCell>
               <TableCell sx={tableStyles.headerCell}>Email</TableCell>
               <TableCell sx={tableStyles.headerCell}>Adresse</TableCell>
@@ -102,6 +123,7 @@ const CustomerList = () => {
           <TableBody>
             {customers.map((customer) => (
               <TableRow key={customer.id} sx={tableStyles.row}>
+                <TableCell>{customer.id}</TableCell>
                 <TableCell>{customer.name}</TableCell>
                 <TableCell>{customer.email}</TableCell>
                 <TableCell>{customer.address}</TableCell>
@@ -111,6 +133,12 @@ const CustomerList = () => {
                     color="primary"
                   >
                     <AccountBalanceIcon />
+                  </IconButton>
+                  <IconButton 
+                    onClick={() => handleEdit(customer)}
+                    color="primary"
+                  >
+                    <EditIcon />
                   </IconButton>
                   <IconButton 
                     onClick={() => handleDelete(customer.id)}
@@ -146,6 +174,17 @@ const CustomerList = () => {
         onClose={() => setOpenCreateDialog(false)}
         onSuccess={loadCustomers}
       />
+      {selectedCustomer && (
+        <EditCustomer
+          open={openEditDialog}
+          onClose={() => {
+            setOpenEditDialog(false);
+            setSelectedCustomer(null);
+          }}
+          onSuccess={loadCustomers}
+          customer={selectedCustomer}
+        />
+      )}
     </Box>
   );
 };

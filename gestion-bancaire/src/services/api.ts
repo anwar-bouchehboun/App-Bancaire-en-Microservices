@@ -11,11 +11,11 @@ const api = axios.create({
 });
 
 export const customerApi = {
-  getAll: (page = 0, size = 10, name?: string) =>
+  getAll: (page = 0, size = 10, name?: string, sort: string = "id") =>
     api.get<CustomerResponse>(
       `/customer-service/api/customers?page=${page}&size=${size}${
         name ? `&name=${name}` : ""
-      }`
+      }&sort=${sort}`
     ),
 
   getById: (id: number) =>
@@ -23,6 +23,9 @@ export const customerApi = {
 
   create: (customer: Omit<Customer, "id">) =>
     api.post<Customer>("/customer-service/api/customers", customer),
+
+  update: (id: number, customer: Omit<Customer, "id">) =>
+    api.put<Customer>(`/customer-service/api/customers/${id}`, customer),
 
   delete: (id: number) => api.delete(`/customer-service/api/customers/${id}`),
 };

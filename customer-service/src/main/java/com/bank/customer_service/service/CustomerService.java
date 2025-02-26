@@ -41,6 +41,17 @@ public interface CustomerService {
     CustomerResponse getCustomerById(Long id);
 
     /*
+     * Met à jour un client
+     * 
+     * @param id
+     * 
+     * @param request
+     * 
+     * @return CustomerResponse
+     */
+    CustomerResponse updateCustomer(Long id, CustomerRequest request);
+
+    /*
      * Supprime un client par son ID
      * 
      * @param id

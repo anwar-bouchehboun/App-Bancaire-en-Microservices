@@ -73,6 +73,34 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /*
+     * Met à jour un client
+     * 
+     * @param id
+     * 
+     * @param request
+     * 
+     * @return CustomerResponse
+     */
+    @Override
+    public CustomerResponse updateCustomer(Long id, CustomerRequest request) {
+        Customer existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
+
+        // Vérifier si l'email est déjà utilisé par un autre client
+        if (!existingCustomer.getEmail().equals(request.getEmail()) &&
+                customerRepository.existsByEmail(request.getEmail())) {
+            throw CustomerAlreadyExistsException.withEmail(request.getEmail());
+        }
+
+        existingCustomer.setName(request.getName());
+        existingCustomer.setEmail(request.getEmail());
+        existingCustomer.setAddress(request.getAddress());
+
+        Customer updatedCustomer = customerRepository.save(existingCustomer);
+        return customerMapper.toResponse(updatedCustomer);
+    }
+
+    /*
      * Supprime un client par son ID
      * 
      * @param id
