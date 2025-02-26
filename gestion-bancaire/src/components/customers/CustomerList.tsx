@@ -53,14 +53,14 @@ const CustomerList = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" sx={{ textAlign: 'center' }} gutterBottom>
         Liste des Clients
       </Typography>
       <Button
         variant="contained"
         color="primary"
         onClick={() => setOpenCreateDialog(true)}
-        sx={{ mb: 3 }}
+        sx={{ mb: 3, display: 'block', margin: '0 auto' }}
       >
         Nouveau Client
       </Button>

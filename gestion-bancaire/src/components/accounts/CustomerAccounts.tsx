@@ -60,14 +60,14 @@ const CustomerAccounts = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" sx={{ textAlign: 'center' }} gutterBottom>
         Comptes de {customer?.name}
       </Typography>
       <Button
         variant="contained"
         color="primary"
         onClick={() => setOpenCreateDialog(true)}
-        sx={{ mb: 3 }}
+        sx={{ mb: 3, display: 'block', margin: '0 auto' }}
       >
         Nouveau Compte
       </Button>

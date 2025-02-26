@@ -9,7 +9,9 @@ const Navbar = () => {
       sx={{ 
         backgroundColor: 'white',
         borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        width: '101%',
       }}
+      
     >
       <Toolbar sx={{ 
         justifyContent: 'space-between',
@@ -45,13 +47,13 @@ const Navbar = () => {
           <Button 
             component={RouterLink} 
             to="/customers"
-            variant="contained"
+          //  variant="contained"
             sx={{ 
               mx: 1,
-              boxShadow: 2,
+            //  boxShadow: 2,
               '&:hover': {
-                boxShadow: 4
-              }
+                backgroundColor: 'primary.light',
+                color: 'white'              }
             }}
           >
             Clients

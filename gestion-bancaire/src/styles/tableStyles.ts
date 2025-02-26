@@ -4,9 +4,10 @@ export const tableStyles = {
   container: {
     mt: 3,
     p: 0,
+    margin: '20px auto',
     backgroundColor: 'background.paper',
     overflow: 'hidden',
-    width: '100vw',
+    width: '80%',
     '& .MuiTableCell-root': {
       borderColor: 'rgba(224, 224, 224, 1)',
       padding: '16px 24px',
@@ -14,7 +15,7 @@ export const tableStyles = {
     },
     '& .MuiTable-root': {
       width: '100%',
-      tableLayout: 'auto'
+      tableLayout: 'auto',
     }
   } as SxProps,
   

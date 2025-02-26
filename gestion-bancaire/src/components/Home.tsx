@@ -10,7 +10,7 @@ const Home = () => {
         alignItems: 'center',
         textAlign: 'center',
         py: { xs: 6, sm: 8, md: 10 },
-        width: '100vw'
+        width: '100%'
       }}
     >
       <AccountBalanceIcon 

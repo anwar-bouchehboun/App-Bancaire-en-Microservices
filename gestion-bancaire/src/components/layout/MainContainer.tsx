@@ -12,11 +12,11 @@ const MainContainer = ({ children }: MainContainerProps) => {
       backgroundColor: 'background.default',
       pt: 3,
       pb: 6,
-      width: '100vw',
+      width: '90%',
       overflowX: 'hidden'
     }}>
       <Box sx={{ 
-        width: '100vw'
+            width: '98vw'
       }}>
         {children}
       </Box>
